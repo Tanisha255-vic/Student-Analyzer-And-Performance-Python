@@ -1,4 +1,4 @@
-# Student-Analyzer-And-Performance-Python
+# Student-Analyzer-And-Performance | Python
 ## Output:
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/be0b25a0-e4ac-4f82-8703-6f5078b70151" />
 

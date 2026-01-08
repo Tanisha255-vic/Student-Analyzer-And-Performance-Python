@@ -1,0 +1,119 @@
+from tkinter import*
+from tkinter import messagebox
+import mysql.connector
+import matplotlib.pyplot as plt
+
+## Database connection##
+conn = mysql.connector.connect(
+    host="localhost",   # MySQL server is running on this computer
+    user="root",        # MySQL username
+    password="root",    # MySQL password
+    database="student_db"  # Name of the database to use
+)
+cursor = conn.cursor()
+
+## Add Student
+def add_student():
+sid = id_entry.get()           
+name = name_entry.get()        
+subject = subject_entry.get()  
+marks = marks_entry.get()      
+if sid == "" or name == "" or subject == "" or marks == "":
+        messagebox.showwarning("Error", "Please fill all fields")
+        return  
+try:
+        marks_int = int(marks)  # convert marks from string to integer
+cursor.execute(
+            "INSERT INTO student (id, name, subject, marks) VALUES (%s, %s, %s, %s)",
+            (sid, name, subject, marks_int)  # pass values as a tuple in same order
+        )
+ conn.commit()
+messagebox.showinfo("Success", "Student added successfully")
+clear_entries()
+except ValueError:
+        messagebox.showerror("Error", "Marks must be a number")
+except Exception as e:
+        messagebox.showerror("Database Error", f"Something went wrong:\n{e}")
+
+## Update Student
+def update_student():
+sid = id_entry.get()          
+name = name_entry.get()       
+subject = subject_entry.get()  
+marks = marks_entry.get()      
+if sid == "":
+        messagebox.showwarning("Error", "Enter Student ID to update!")
+        return   
+cursor.execute(
+        "UPDATE student SET name=%s, subject=%s, marks=%s WHERE id=%s",
+        (name, subject, marks, sid)
+    )
+conn.commit()
+if cursor.rowcount == 0:
+        messagebox.showerror("Error", "No record found with that ID!")
+    else:
+messagebox.showinfo("Success", "Student updated successfully!")
+clear_entries()
+
+## Delete Student
+def delete_student():
+sid = id_entry.get()
+if sid == "":
+        messagebox.showwarning("Error", "Enter Student ID to delete!")
+        return  
+confirm = messagebox.askyesno("Confirm", "Are you sure you want to delete?")
+if confirm:
+       cursor.execute("DELETE FROM student WHERE id=%s", (sid,))
+conn.commit()
+if cursor.rowcount == 0:
+            messagebox.showerror("Error", "No record found with that ID!")
+        else:
+            messagebox.showinfo("Success", "Student deleted successfully!")
+clear_entries()
+
+## Analyze performance
+def analyze_performance():
+  cursor.execute("SELECT subject, AVG(marks) FROM student GROUP BY subject")
+ data = cursor.fetchall()
+if not data:
+        messagebox.showinfo("Info", "No data to analyze!")
+        return
+subjects = [x[0] for x in data]
+avg_marks = [x[1] for x in data]
+plt.bar(subjects, avg_marks, color="skyblue")
+plt.title("Average Marks by Subject")
+plt.xlabel("Subject")
+plt.ylabel("Average Marks")
+plt.show()
+
+##Clear fields
+def clear_entries():
+ id_entry.delete(0, END)
+name_entry.delete(0, END)
+subject_entry.delete(0, END)
+marks_entry.delete(0, END)
+
+## Create the main window of the application
+root = Tk()
+root.title("Student Performance Analyzer")
+root.geometry("450x600")
+root.config(bg="white")
+Label(root, text="Student Performance Analyzer", font=("Arial", 16, "bold")).pack(pady=10)
+Label(root, text="Student ID (for Update/Delete)").pack()
+id_entry = Entry(root)
+id_entry.pack(pady=5)
+Label(root, text="Name", bg="#f0f8ff").pack()
+name_entry = Entry(root)
+name_entry.pack(pady=5)
+Label(root, text="Subject", bg="#f0f8ff").pack()
+subject_entry = Entry(root)
+subject_entry.pack(pady=5)
+Label(root, text="Marks", bg="#f0f8ff").pack()
+marks_entry = Entry(root)
+marks_entry.pack(pady=5)
+Button(root, text="Add Student", width=20, bg="Red", command=add_student).pack(pady=5)
+Button(root, text="Update Student", width=20, bg="orange", command=update_student).pack(pady=5)
+Button(root, text="Delete Student", width=20, bg="lightgreen", command=delete_student).pack(pady=5)
+Button(root, text="Analyze Performance", width=20, bg="skyblue", command=analyze_performance).pack(pady=5)
+Button(root, text="Clear Fields", width=20, bg="yellow", command=clear_entries).pack(pady=5)
+root.mainloop()

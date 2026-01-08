@@ -1,4 +1,19 @@
-# Student-Analyzer-And-Performance | Python
+# Student-Analyzer-And-Performance Project | Python
+
+## Overview
+This project analyzes student academic performance using Python. It identifies strengths and weaknesses, generates performance reports, and visualizes results for better insights.
+
+## Features
+- Analyze student scores across subjects
+- Generate performance summaries
+- Create charts for visual analysis
+
+## Technologies
+- Python
+- Pandas, NumPy
+- Matplotlib, Seaborn
+- Jupyter Notebook
+
 ## Output:
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/be0b25a0-e4ac-4f82-8703-6f5078b70151" />
 
